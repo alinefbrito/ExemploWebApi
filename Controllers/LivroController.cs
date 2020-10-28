@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+
 using ExemploWebApi.Models;
 
 namespace ExemploWebApi.Controllers
@@ -26,7 +27,7 @@ namespace ExemploWebApi.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET: api/Livro/5
+        // GET: api/Livro/getLivro/5
         [HttpGet]
         [ActionName("getLivro")]
         public Livro Get(int id)
@@ -47,15 +48,35 @@ namespace ExemploWebApi.Controllers
             return livros;
         }
         // POST: api/Livro
-        public void Post([FromBody]string value)
+        [HttpPost]
+        [ActionName("addItens")]
+        public Boolean Post([FromBody]List<Livro> itens)
         {
+            if (itens == null)
+            {
+                return false;
+            }
+            livros.AddRange(itens);
+            return true;
         }
 
         // PUT: api/Livro/5
-        public void Put(int id, [FromBody]string value)
+        [HttpPut]
+        [ActionName("updateItem")]
+        public Boolean Put(int id, [FromBody]Livro item)
         {
-            
+
+            if (item == null)
+            {
+                return false;
+            }
+           
+            int index = livros.IndexOf((Livro)livros.Where((p) => p.Id == id).FirstOrDefault());
+            livros[index] = item;
+
+            return true;
         }
+        
         [HttpGet]
         [ActionName("getByCategoria")]
         public IEnumerable GetLivrosByCategory(string categoria)
