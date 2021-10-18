@@ -41,11 +41,15 @@ namespace ExemploWebApi.Controllers
             return livro;
         }
 
+        //exemplo de método com busca em Banco de dados
         [HttpGet]
         [ActionName("getAll")]
         public IEnumerable GetAllLivros()
         {
-            return livros;
+            DBConnection db = new DBConnection();
+            var l = db.BuscaTodos();
+            db.Fechar();
+            return l;
         }
         // POST: api/Livro
         [HttpPost]
