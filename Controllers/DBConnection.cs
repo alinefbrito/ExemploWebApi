@@ -41,8 +41,7 @@ namespace ExemploWebApi.Controllers
             conn2.Open();
                     
         }
-
-        public List<Livro> BuscaTodos()
+                public List<Livro> BuscaTodos()
         {
             //Fornece uma maneira de ler um fluxo somente de
             //encaminhamento de linhas com base em um banco de dados SQL Server.
@@ -62,7 +61,6 @@ namespace ExemploWebApi.Controllers
                 while (reader.Read())
                 {
                     l.Add(new Livro(int.Parse(reader["id_livro"].ToString()), reader["titulo"].ToString(), reader["genero"].ToString(), Decimal.Parse(reader["preco"].ToString())));
-
 
                 }
             }
