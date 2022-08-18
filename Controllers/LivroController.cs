@@ -36,7 +36,7 @@ namespace ExemploWebApi.Controllers
             if (livro == null)
             {
                 var resp = new HttpResponseMessage(HttpStatusCode.NotFound);
-                throw new HttpResponseException(resp);
+                return resp;
             }
             return livro;
         }
@@ -46,39 +46,48 @@ namespace ExemploWebApi.Controllers
         [ActionName("getAll")]
         public IEnumerable GetAllLivros()
         {
-            DBConnection db = new DBConnection();
-            var l = db.BuscaTodos();
-            db.Fechar();
-            return l;
+            try
+            {
+                DBConnection db = new DBConnection();
+                var l = db.BuscaTodos();
+                db.Fechar();
+                return l;
+            }
+            catch(Exception e)
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                throw new HttpResponseException(resp);
+            }
         }
         // POST: api/Livro
         [HttpPost]
         [ActionName("addItens")]
-        public Boolean Post([FromBody]List<Livro> itens)
+        public HttpResponseMessage Post([FromBody]List<Livro> itens)
         {
             if (itens == null)
             {
-                return false;
+                return new HttpResponseMessage(HttpStatusCode.NotModified);
             }
             livros.AddRange(itens);
-            return true;
+            var response = new HttpResponseMessage(HttpStatusCode.Created);
+            return response ; 
         }
 
         // PUT: api/Livro/5
         [HttpPut]
         [ActionName("updateItem")]
-        public Boolean Put(int id, [FromBody]Livro item)
+        public HttpResponseMessage Put(int id, [FromBody]Livro item)
         {
 
             if (item == null)
             {
-                return false;
+                return new HttpResponseMessage(HttpStatusCode.NotModified);
             }
            
             int index = livros.IndexOf((Livro)livros.Where((p) => p.Id == id).FirstOrDefault());
             livros[index] = item;
 
-            return true;
+            return new HttpResponseMessage(HttpStatusCode.Accepted);
         }
         
         [HttpGet]
@@ -92,12 +101,12 @@ namespace ExemploWebApi.Controllers
 
         [HttpDelete]
         [ActionName("delete")]
-        public Livro Delete(int id)
+        public HttpResponseMessage Delete(int id)
         {
             Livro l = (Livro)livros.Where((p) => p.Id == id);
             int index = livros.IndexOf(l);
             livros.RemoveAt(index);
-            return l;
+            return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
         

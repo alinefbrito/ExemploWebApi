@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<sitemanifest>
-  <IisApp path="C:\Users\aline\OneDrive - Etec Centro Paula Souza\Aulas\ETECBG\TM\Exemplos\ExemploWebApi\ExemploWebApi\obj\Release\Package\PackageTmp" />
-  <setAcl path="C:\Users\aline\OneDrive - Etec Centro Paula Souza\Aulas\ETECBG\TM\Exemplos\ExemploWebApi\ExemploWebApi\obj\Release\Package\PackageTmp" setAclResourceType="Directory" />
-  <setAcl path="C:\Users\aline\OneDrive - Etec Centro Paula Souza\Aulas\ETECBG\TM\Exemplos\ExemploWebApi\ExemploWebApi\obj\Release\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
-</sitemanifest>

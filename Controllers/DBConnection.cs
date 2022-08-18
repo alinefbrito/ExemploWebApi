@@ -39,8 +39,7 @@ namespace ExemploWebApi.Controllers
             //Abre uma conexão de banco de dados com as configurações de
             //propriedade especificadas pelo ConnectionString
             conn2.Open();
-
-         
+                    
         }
 
         public List<Livro> BuscaTodos()

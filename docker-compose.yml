@@ -1,9 +1,0 @@
-version: '3.4'
-
-services:
-  exemplowebapi:
-    image: ${DOCKER_REGISTRY-}exemplowebapi
-
-    build:
-      context: .
-      dockerfile: Dockerfile
