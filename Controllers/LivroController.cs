@@ -19,8 +19,8 @@ namespace ExemploWebApi.Controllers
                                                             new Livro(5, "Memórias Postumas de Bras Cubas", "Romance", 9.99M),
                                                             new Livro(6, "Java 8", "Programaçao", 156.98M)});
 
-        
-        
+
+
 
         public IEnumerable<string> Get()
         {
@@ -30,39 +30,46 @@ namespace ExemploWebApi.Controllers
         // GET: api/Livro/getLivro/5
         [HttpGet]
         [ActionName("getLivro")]
-        public Livro Get(int id)
+        public HttpResponseMessage Get(int id)
         {
-            var livro = livros.FirstOrDefault((p) => p.Id == id);
+            var livro = livros.FirstOrDefault((l) => l.Id == id);
+
             if (livro == null)
             {
-                var resp = new HttpResponseMessage(HttpStatusCode.NotFound);
-                return resp;
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+
             }
-            return livro;
+            return Request.CreateResponse<Livro>(HttpStatusCode.OK, livro);
         }
 
         //exemplo de método com busca em Banco de dados
         [HttpGet]
         [ActionName("getAll")]
-        public IEnumerable GetAllLivros()
+        public HttpResponseMessage GetAllLivros()
         {
+            DBConnection db = new DBConnection();
             try
             {
-                DBConnection db = new DBConnection();
+                db.Abrir();
+
                 var l = db.BuscaTodos();
-                db.Fechar();
-                return l;
+
+                return Request.CreateResponse<IEnumerable<Livro>>(HttpStatusCode.OK, l);
             }
-            catch(Exception e)
+            catch (Exception)
             {
-                var resp = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-                throw new HttpResponseException(resp);
+                return new HttpResponseMessage(HttpStatusCode.Unauthorized);
+
+            }
+            finally
+            {
+                db.Fechar();
             }
         }
         // POST: api/Livro
         [HttpPost]
         [ActionName("addItens")]
-        public HttpResponseMessage Post([FromBody]List<Livro> itens)
+        public HttpResponseMessage Post([FromBody] List<Livro> itens)
         {
             if (itens == null)
             {
@@ -70,33 +77,64 @@ namespace ExemploWebApi.Controllers
             }
             livros.AddRange(itens);
             var response = new HttpResponseMessage(HttpStatusCode.Created);
-            return response ; 
+            return response;
+        }
+
+        [HttpPost]
+        [ActionName("addItensBD")]
+        public HttpResponseMessage PostBD([FromBody] Livro livro)
+        {
+            int resp;
+            DBConnection db = new DBConnection();
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.NotModified);
+            try
+            {
+                db.Abrir();
+                resp = db.InsereLivro(livro);
+                db.Fechar();
+
+            }
+            catch (Exception)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                throw new HttpResponseException(response);
+            }
+            finally
+            {
+                db.Fechar();
+            }
+            if (resp > 0)
+            {
+                response = new HttpResponseMessage(HttpStatusCode.Created);
+            }
+            return response;
         }
 
         // PUT: api/Livro/5
         [HttpPut]
         [ActionName("updateItem")]
-        public HttpResponseMessage Put(int id, [FromBody]Livro item)
+        public HttpResponseMessage Put(int id, [FromBody] Livro item)
         {
 
             if (item == null)
             {
                 return new HttpResponseMessage(HttpStatusCode.NotModified);
             }
-           
+
             int index = livros.IndexOf((Livro)livros.Where((p) => p.Id == id).FirstOrDefault());
             livros[index] = item;
 
             return new HttpResponseMessage(HttpStatusCode.Accepted);
         }
-        
+
         [HttpGet]
         [ActionName("getByCategoria")]
-        public IEnumerable GetLivrosByCategory(string categoria)
+        public HttpResponseMessage GetLivrosByCategory(string categoria)
         {
-            return livros.Where(
+            var l = livros.Where(
                 (p) => string.Equals(p.Categoria, categoria,
                     StringComparison.OrdinalIgnoreCase));
+            return Request.CreateResponse<IEnumerable<Livro>>(HttpStatusCode.OK, l);
         }
 
         [HttpDelete]
@@ -104,12 +142,17 @@ namespace ExemploWebApi.Controllers
         public HttpResponseMessage Delete(int id)
         {
             Livro l = (Livro)livros.Where((p) => p.Id == id);
+            if (l == null)
+            {
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
+
             int index = livros.IndexOf(l);
             livros.RemoveAt(index);
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 
-        
+
     }
 
 }

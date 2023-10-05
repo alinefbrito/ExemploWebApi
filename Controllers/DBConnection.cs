@@ -10,16 +10,16 @@ namespace ExemploWebApi.Controllers
     public class DBConnection
     {
         //SqlConnection conn;
-        MySqlConnection conn2;
+        readonly MySqlConnection conn2;
 
         //servidor de banco de dados
         static string host = "localhost";
         //nome do banco de dados
-        static string database = "dblivros";
+        static readonly string database = "dblivros";
         //usuário de conexão do banco de dados
-        static string userDB = "root";
+        static readonly string userDB = "root";
         //senha de conexão do banco de dados
-        static string password = "";
+        static readonly string password = "";
         //string de conexão ao BD
         public static string strProvider = "server=" + host +
                                             ";Database=" + database +
@@ -32,16 +32,16 @@ namespace ExemploWebApi.Controllers
 
         public DBConnection()
         {
-            
+
             //sql = "SELECT * FROM tb_empregado WHERE pk_empregado = 7";
             //instância a conexão
             conn2 = new MySqlConnection(strProvider);
             //Abre uma conexão de banco de dados com as configurações de
             //propriedade especificadas pelo ConnectionString
             conn2.Open();
-                    
+
         }
-                public List<Livro> BuscaTodos()
+        public List<Livro> BuscaTodos()
         {
             //Fornece uma maneira de ler um fluxo somente de
             //encaminhamento de linhas com base em um banco de dados SQL Server.
@@ -65,6 +65,20 @@ namespace ExemploWebApi.Controllers
                 }
             }
             return l;
+
+        }
+
+
+        public int InsereLivro(Livro l)
+        {
+
+            MySqlCommand comm = conn2.CreateCommand();
+            comm.CommandText = "INSERT INTO livro (titulo, genero, preco) VALUES(@titulo, @genero, @preco)";
+            comm.Parameters.AddWithValue("@titulo", l.Nome);
+            comm.Parameters.AddWithValue("@genero", l.Categoria);
+            comm.Parameters.AddWithValue("@preco", l.Preco);
+            return comm.ExecuteNonQuery();
+
 
         }
 
