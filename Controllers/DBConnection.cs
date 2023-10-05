@@ -38,9 +38,11 @@ namespace ExemploWebApi.Controllers
             conn2 = new MySqlConnection(strProvider);
             //Abre uma conexão de banco de dados com as configurações de
             //propriedade especificadas pelo ConnectionString
-            conn2.Open();
+            
 
         }
+
+        
         public List<Livro> BuscaTodos()
         {
             //Fornece uma maneira de ler um fluxo somente de
@@ -81,7 +83,10 @@ namespace ExemploWebApi.Controllers
 
 
         }
-
+        public void Abrir()
+        {
+            conn2.Open();
+        }
         public void Fechar()
         {
             conn2.Close();
